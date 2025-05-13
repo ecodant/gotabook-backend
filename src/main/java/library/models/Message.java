@@ -1,4 +1,4 @@
-package loan;
+package library.models;
 
 import java.util.Date;
 
@@ -13,18 +13,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "loans")
-public class Loan {
+@Document(collection = "messages")
+public class Message {
 	@Id
 	private ObjectId id;
-
-	private ObjectId bookId;
-	private ObjectId userId;
-	private Date loanDate;
-	private Date returnDate;
-	private LoanStatus status;
-
-	public enum LoanStatus {
-		ACTIVE, RETURNED, WAITING
-	}
+	private ObjectId senderId;
+	private ObjectId receiverId;
+	private String content;
+	private Date date;
+	private boolean read;
 }
