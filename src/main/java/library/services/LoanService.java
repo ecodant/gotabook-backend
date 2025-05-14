@@ -31,9 +31,10 @@ public class LoanService {
 		Optional<Book> bookOpt = bookRepository.findById(loan.getBookId());
 		if (bookOpt.isPresent()) {
 			Book book = bookOpt.get();
-			if (book.getStatus() == BookStatus.AVAILABLE) {
-				book.setStatus(BookStatus.BORROWED);
+			if (book.getStatus().equals(BookStatus.AVAILABLE.toString())) {
+				book.setStatus(BookStatus.BORROWED.toString());
 				bookRepository.save(book);
+//				System.out.println("Book found: " + bookOpt.get());
 				return loanRepository.save(loan);
 			}
 		}
@@ -77,7 +78,7 @@ public class LoanService {
 			Optional<Book> bookOpt = bookRepository.findById(loan.getBookId());
 			if (bookOpt.isPresent()) {
 				Book book = bookOpt.get();
-				book.setStatus(BookStatus.AVAILABLE);
+				book.setStatus(BookStatus.AVAILABLE.toString());
 				bookRepository.save(book);
 			}
 

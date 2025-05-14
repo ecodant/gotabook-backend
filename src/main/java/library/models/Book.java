@@ -7,30 +7,31 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Book {
 	@Id
 	private String id;
+
 	private String title;
 	private String author;
 	private int year;
 	private String category;
-	private BookStatus status;
+	private String status; // AVAILABLE, BORROWED
 	private double averageRating;
 
-	// Default constructor
+	// Standard getters and setters
+
+	// Constructor
 	public Book() {
-		this.status = BookStatus.AVAILABLE;
-		this.averageRating = 0.0;
+		// Default constructor required by MongoDB
+		this.status = "AVAILABLE";
 	}
 
-	// Constructor with fields
 	public Book(String title, String author, int year, String category) {
 		this.title = title;
 		this.author = author;
 		this.year = year;
 		this.category = category;
-		this.status = BookStatus.AVAILABLE;
+		this.status = "AVAILABLE";
 		this.averageRating = 0.0;
 	}
 
-	// Getters and Setters
 	public String getId() {
 		return id;
 	}
@@ -71,11 +72,11 @@ public class Book {
 		this.category = category;
 	}
 
-	public BookStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(BookStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -86,4 +87,5 @@ public class Book {
 	public void setAverageRating(double averageRating) {
 		this.averageRating = averageRating;
 	}
+
 }

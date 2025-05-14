@@ -1,89 +1,125 @@
 package library.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import datastructures.BookBST;
+import jakarta.annotation.PostConstruct;
+import library.exceptions.ResourceNotFoundException;
 import library.models.Book;
-import library.models.BookStatus;
 import library.repositories.BookRepository;
 
 @Service
 public class BookService {
-
 	private final BookRepository bookRepository;
+	private final BookBST bookBST;
+	private static final Logger logger = LoggerFactory.getLogger(BookService.class);
 
 	@Autowired
 	public BookService(BookRepository bookRepository) {
 		this.bookRepository = bookRepository;
+		this.bookBST = new BookBST();
+		initializeBSTFromDatabase();
 	}
 
-	// Create a new book
-	public Book createBook(Book book) {
-		return bookRepository.save(book);
+	@PostConstruct
+	private void initializeBSTFromDatabase() {
+		logger.info("Loading books from database into BST...");
+		List<Book> allBooks = bookRepository.findAll();
+		for (Book book : allBooks) {
+			bookBST.insert(book);
+		}
+		logger.info("Loaded {} books into BST", allBooks.size());
 	}
 
-	// Get all books
-	public List<Book> getAllBooks() {
-		return bookRepository.findAll();
+	// Add a new book
+	public Book addBook(Book book) {
+		// First save to MongoDB
+		Book savedBook = bookRepository.save(book);
+		// Then add to BST
+		bookBST.insert(savedBook);
+		return savedBook;
 	}
 
-	// Get book by ID
-	public Optional<Book> getBookById(String id) {
-		return bookRepository.findById(id);
+	// Search by title (using BST for efficiency)
+	public Book findByTitle(String title) {
+		return bookBST.search(title);
+	}
+
+	// Search by title prefix (e.g., books starting with "The")
+	public List<Book> findByTitlePrefix(String prefix) {
+		List<Book> result = new ArrayList<>();
+		List<Book> allBooks = bookBST.getAllBooks();
+
+		for (Book book : allBooks) {
+			if (book.getTitle().toLowerCase().startsWith(prefix.toLowerCase())) {
+				result.add(book);
+			}
+		}
+
+		return result;
+	}
+
+	// Get all books in alphabetical order
+	public List<Book> getAllBooksSorted() {
+		return bookBST.getAllBooks();
 	}
 
 	// Update a book
-	public Book updateBook(Book book) {
-		return bookRepository.save(book);
+	public Book updateBook(String id, Book updatedBook) {
+		// First find the book in MongoDB
+		Book existingBook = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+
+		// Update fields using a switch statement
+		String[] fields = { "title", "author", "year", "category" };
+
+		existingBook.setTitle(updatedBook.getTitle());
+		existingBook.setAuthor(updatedBook.getAuthor());
+		existingBook.setYear(updatedBook.getYear());
+		existingBook.setCategory(updatedBook.getCategory());
+
+		// Save to MongoDB
+		Book savedBook = bookRepository.save(existingBook);
+
+		// Update BST (delete and re-insert)
+		bookBST.delete(existingBook.getTitle());
+		bookBST.insert(savedBook);
+
+		return savedBook;
 	}
 
 	// Delete a book
 	public void deleteBook(String id) {
+		Book book = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+
+		// Delete from MongoDB
 		bookRepository.deleteById(id);
+
+		// Delete from BST
+		bookBST.delete(book.getTitle());
 	}
 
-	// Search books by title
-	public List<Book> searchBooksByTitle(String title) {
-		return bookRepository.findByTitleContainingIgnoreCase(title);
-	}
-
-	// Search books by author
-	public List<Book> searchBooksByAuthor(String author) {
+	// Additional methods for other search criteria
+	public List<Book> findByAuthor(String author) {
+		// Since we're searching by author (not optimized in BST),
+		// we'll use MongoDB directly
 		return bookRepository.findByAuthorContainingIgnoreCase(author);
 	}
 
-	// Search books by category
-	public List<Book> searchBooksByCategory(String category) {
-		return bookRepository.findByCategoryIgnoreCase(category);
+	public List<Book> findByCategory(String category) {
+		// Use MongoDB for category search
+		return bookRepository.findByCategory(category);
 	}
 
-	// Get books by status
-	public List<Book> getBooksByStatus(BookStatus status) {
-		return bookRepository.findByStatus(status);
-	}
-
-	// Update book status
-	public Book updateBookStatus(String id, BookStatus status) {
-		Optional<Book> bookOpt = bookRepository.findById(id);
-		if (bookOpt.isPresent()) {
-			Book book = bookOpt.get();
-			book.setStatus(status);
-			return bookRepository.save(book);
-		}
-		return null;
-	}
-
-	// Update book rating
-	public Book updateBookRating(String id, double averageRating) {
-		Optional<Book> bookOpt = bookRepository.findById(id);
-		if (bookOpt.isPresent()) {
-			Book book = bookOpt.get();
-			book.setAverageRating(averageRating);
-			return bookRepository.save(book);
-		}
-		return null;
+	public Optional<Book> findById(String id) {
+		return bookRepository.findById(id);
 	}
 }

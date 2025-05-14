@@ -17,82 +17,89 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import library.models.Book;
-import library.models.BookStatus;
 import library.services.BookService;
 
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
-
-	private final BookService bookService;
+	private final BookService bookCatalogService;
 
 	@Autowired
-	public BookController(BookService bookService) {
-		this.bookService = bookService;
+	public BookController(BookService bookCatalogService) {
+		this.bookCatalogService = bookCatalogService;
 	}
 
-	// Create a new book
-	@PostMapping
-	public ResponseEntity<Book> createBook(@RequestBody Book book) {
-		Book createdBook = bookService.createBook(book);
-		return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
+	@GetMapping("/")
+	public ResponseEntity<List<Book>> getAllBooks(@RequestParam(required = false) String sortBy) {
+		List<Book> books;
+		if ("title".equals(sortBy)) {
+			// Use BST for title-sorted results
+			books = bookCatalogService.getAllBooksSorted();
+		} else {
+			// For other sorts, you might need repository methods
+			books = bookCatalogService.getAllBooksSorted();
+		}
+		return ResponseEntity.ok(books);
 	}
 
-	// Get all books
-	@GetMapping
-	public ResponseEntity<List<Book>> getAllBooks() {
-		List<Book> books = bookService.getAllBooks();
-		return new ResponseEntity<>(books, HttpStatus.OK);
-	}
-
-	// Get book by ID
 	@GetMapping("/{id}")
 	public ResponseEntity<Book> getBookById(@PathVariable String id) {
-		Optional<Book> book = bookService.getBookById(id);
-		return book.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+		Optional<Book> book = bookCatalogService.findById(id);
+
+		if (book.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		} else
+			return ResponseEntity.ok(book.get());
 	}
 
-	// Update a book
+	@GetMapping("/title/{title}")
+	public ResponseEntity<Book> getBookByTitle(@PathVariable String title) {
+		Book book = bookCatalogService.findByTitle(title);
+		if (book == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(book);
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String title,
+			@RequestParam(required = false) String author, @RequestParam(required = false) String category) {
+
+		List<Book> results;
+
+		if (title != null) {
+			// Use BST for efficient title search
+			results = bookCatalogService.findByTitlePrefix(title);
+		} else if (author != null) {
+			// Use MongoDB for author search
+			results = bookCatalogService.findByAuthor(author);
+		} else if (category != null) {
+			// Use MongoDB for category search
+			results = bookCatalogService.findByCategory(category);
+		} else {
+			// Return all books if no parameters
+			results = bookCatalogService.getAllBooksSorted();
+		}
+
+		return ResponseEntity.ok(results);
+	}
+
+	@PostMapping
+	public ResponseEntity<Book> createBook(@RequestBody Book book) {
+
+		Book newBook = bookCatalogService.addBook(book);
+		return ResponseEntity.status(HttpStatus.CREATED).body(newBook);
+	}
+
 	@PutMapping("/{id}")
 	public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book book) {
-		book.setId(id);
-		Book updatedBook = bookService.updateBook(book);
-		return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+		Book updatedBook = bookCatalogService.updateBook(id, book);
+		return ResponseEntity.ok(updatedBook);
 	}
 
-	// Delete a book
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteBook(@PathVariable String id) {
-		bookService.deleteBook(id);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
-
-	// Search books by title
-	@GetMapping("/search/title")
-	public ResponseEntity<List<Book>> searchBooksByTitle(@RequestParam String title) {
-		List<Book> books = bookService.searchBooksByTitle(title);
-		return new ResponseEntity<>(books, HttpStatus.OK);
-	}
-
-	// Search books by author
-	@GetMapping("/search/author")
-	public ResponseEntity<List<Book>> searchBooksByAuthor(@RequestParam String author) {
-		List<Book> books = bookService.searchBooksByAuthor(author);
-		return new ResponseEntity<>(books, HttpStatus.OK);
-	}
-
-	// Search books by category
-	@GetMapping("/search/category")
-	public ResponseEntity<List<Book>> searchBooksByCategory(@RequestParam String category) {
-		List<Book> books = bookService.searchBooksByCategory(category);
-		return new ResponseEntity<>(books, HttpStatus.OK);
-	}
-
-	// Get books by status
-	@GetMapping("/status/{status}")
-	public ResponseEntity<List<Book>> getBooksByStatus(@PathVariable BookStatus status) {
-		List<Book> books = bookService.getBooksByStatus(status);
-		return new ResponseEntity<>(books, HttpStatus.OK);
+		bookCatalogService.deleteBook(id);
+		return ResponseEntity.noContent().build();
 	}
 }

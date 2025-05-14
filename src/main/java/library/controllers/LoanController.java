@@ -30,7 +30,7 @@ public class LoanController {
 	}
 
 	// Create a new loan
-	@PostMapping
+	@PostMapping("/")
 	public ResponseEntity<Loan> createLoan(@RequestBody Loan loan) {
 		Loan createdLoan = loanService.createLoan(loan);
 		if (createdLoan != null) {

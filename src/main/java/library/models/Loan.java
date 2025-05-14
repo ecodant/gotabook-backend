@@ -1,5 +1,6 @@
 package library.models;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
@@ -19,18 +20,26 @@ public class Loan {
 		ACTIVE, RETURNED, WAITING
 	}
 
-	// Default constructor
 	public Loan() {
 		this.loanDate = new Date();
 		this.status = LoanStatus.ACTIVE;
+		this.returnDate = calculateDefaultReturnDate();
 	}
 
-	// Constructor with fields
 	public Loan(String bookId, String userId) {
 		this.bookId = bookId;
 		this.userId = userId;
 		this.loanDate = new Date();
 		this.status = LoanStatus.ACTIVE;
+		this.returnDate = calculateDefaultReturnDate();
+	}
+
+	// Helper method to calculate default return date (e.g., 14 days later)
+	private Date calculateDefaultReturnDate() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(this.loanDate);
+		calendar.add(Calendar.DAY_OF_YEAR, 14); // 14 days from loan date
+		return calendar.getTime();
 	}
 
 	// Getters and Setters
