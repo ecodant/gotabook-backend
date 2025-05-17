@@ -37,7 +37,7 @@ public class RatingController {
 	}
 
 	// Get all ratings
-	@GetMapping
+	@GetMapping("/")
 	public ResponseEntity<List<Rating>> getAllRatings() {
 		List<Rating> ratings = ratingService.getAllRatings();
 		return new ResponseEntity<>(ratings, HttpStatus.OK);

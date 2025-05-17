@@ -34,7 +34,7 @@ public class UserController {
 	public ResponseEntity<User> register(@RequestBody User user) {
 		Optional<User> existingUser = userService.getUserByUsername(user.getUsername());
 		if (existingUser.isPresent()) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT); // Username taken
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		User createdUser = userService.createUser(user);
 		return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -43,7 +43,10 @@ public class UserController {
 	// User login
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestBody User loginRequest) {
-		Optional<User> user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+		Optional<User> user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+		if (user.isEmpty()) {
+			System.out.println("Invalid username or password");
+		}
 		return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
 	}

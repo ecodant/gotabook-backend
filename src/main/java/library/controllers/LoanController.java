@@ -41,7 +41,7 @@ public class LoanController {
 	}
 
 	// Get all loans
-	@GetMapping
+	@GetMapping("/")
 	public ResponseEntity<List<Loan>> getAllLoans() {
 		List<Loan> loans = loanService.getAllLoans();
 		return new ResponseEntity<>(loans, HttpStatus.OK);

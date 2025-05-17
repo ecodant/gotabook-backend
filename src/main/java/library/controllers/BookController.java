@@ -84,7 +84,7 @@ public class BookController {
 		return ResponseEntity.ok(results);
 	}
 
-	@PostMapping
+	@PostMapping("/")
 	public ResponseEntity<Book> createBook(@RequestBody Book book) {
 
 		Book newBook = bookCatalogService.addBook(book);

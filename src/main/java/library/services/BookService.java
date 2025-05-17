@@ -68,7 +68,7 @@ public class BookService {
 
 	// Get all books in alphabetical order
 	public List<Book> getAllBooksSorted() {
-		return bookBST.getAllBooks();
+		return bookRepository.findAll();
 	}
 
 	// Update a book
@@ -77,13 +77,22 @@ public class BookService {
 		Book existingBook = bookRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 
-		// Update fields using a switch statement
-		String[] fields = { "title", "author", "year", "category" };
-
-		existingBook.setTitle(updatedBook.getTitle());
-		existingBook.setAuthor(updatedBook.getAuthor());
-		existingBook.setYear(updatedBook.getYear());
-		existingBook.setCategory(updatedBook.getCategory());
+		// Update fields only if they are not null
+		if (updatedBook.getTitle() != null) {
+			existingBook.setTitle(updatedBook.getTitle());
+		}
+		if (updatedBook.getAuthor() != null) {
+			existingBook.setAuthor(updatedBook.getAuthor());
+		}
+		if (updatedBook.getYear() > 0) {
+			existingBook.setYear(updatedBook.getYear());
+		}
+		if (updatedBook.getCategory() != null) {
+			existingBook.setCategory(updatedBook.getCategory());
+		}
+		if (updatedBook.getStatus() != null) { // Assuming 'status' is a field in the Book class
+			existingBook.setStatus(updatedBook.getStatus());
+		}
 
 		// Save to MongoDB
 		Book savedBook = bookRepository.save(existingBook);

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import library.models.Book;
 import library.models.Rating;
@@ -24,6 +25,7 @@ public class RatingService {
 	}
 
 	// Create a new rating
+	@Transactional
 	public Rating createRating(Rating rating) {
 		// Check if user already rated this book
 		Optional<Rating> existingRating = ratingRepository.findByBookIdAndUserId(rating.getBookId(),
@@ -67,6 +69,7 @@ public class RatingService {
 	}
 
 	// Update a rating
+	@Transactional
 	public Rating updateRating(Rating rating) {
 		Rating savedRating = ratingRepository.save(rating);
 		updateBookAverageRating(rating.getBookId());
@@ -74,6 +77,7 @@ public class RatingService {
 	}
 
 	// Delete a rating
+	@Transactional
 	public void deleteRating(String id) {
 		Optional<Rating> ratingOpt = ratingRepository.findById(id);
 		if (ratingOpt.isPresent()) {
@@ -87,19 +91,19 @@ public class RatingService {
 	private void updateBookAverageRating(String bookId) {
 		List<Rating> bookRatings = ratingRepository.findByBookId(bookId);
 
+		double averageRating = 0.0;
 		if (!bookRatings.isEmpty()) {
-			double sum = 0;
-			for (Rating r : bookRatings) {
-				sum += r.getRating();
-			}
-			double averageRating = sum / bookRatings.size();
+			double sum = bookRatings.stream().mapToDouble(Rating::getRating).sum();
+			averageRating = sum / bookRatings.size();
+		}
 
-			Optional<Book> bookOpt = bookRepository.findById(bookId);
-			if (bookOpt.isPresent()) {
-				Book book = bookOpt.get();
-				book.setAverageRating(averageRating);
-				bookRepository.save(book);
-			}
+		Optional<Book> bookOpt = bookRepository.findById(bookId);
+		System.out.println("Book ID TO REE CALCULATE: " + bookOpt.get().getTitle());
+		if (bookOpt.isPresent()) {
+			Book book = bookOpt.get();
+			System.out.println("Updating average rating for book: " + book.getTitle() + " to " + averageRating);
+			book.setAverageRating(averageRating);
+			bookRepository.save(book); // Persist the updated book in MongoDB
 		}
 	}
 }
