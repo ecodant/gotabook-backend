@@ -11,6 +11,7 @@ public class Loan {
 	@Id
 	private String id;
 	private String bookId;
+	private String bookTitle;
 	private String userId;
 	private Date loanDate;
 	private Date returnDate;
@@ -38,7 +39,7 @@ public class Loan {
 	private Date calculateDefaultReturnDate() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(this.loanDate);
-		calendar.add(Calendar.DAY_OF_YEAR, 14); // 14 days from loan date
+		calendar.add(Calendar.DAY_OF_YEAR, 14);
 		return calendar.getTime();
 	}
 
@@ -49,6 +50,14 @@ public class Loan {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getBookTitle() {
+		return bookTitle;
+	}
+
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 
 	public String getBookId() {

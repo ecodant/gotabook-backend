@@ -76,6 +76,17 @@ public class LoanController {
 		return new ResponseEntity<>(loans, HttpStatus.OK);
 	}
 
+	// Get waiting queue for a book
+	@GetMapping("/queue/{bookId}")
+	public ResponseEntity<List<Loan>> getLoanQueueByBookId(@PathVariable String bookId) {
+		List<Loan> queue = loanService.getLoanQueueByBookId(bookId);
+		if (queue != null && !queue.isEmpty()) {
+			return new ResponseEntity<>(queue, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 	// Return a book
 	@PutMapping("/{id}/return")
 	public ResponseEntity<Loan> returnBook(@PathVariable String id) {

@@ -12,14 +12,10 @@ public class Book {
 	private String author;
 	private int year;
 	private String category;
-	private String status; // AVAILABLE, BORROWED
+	private String status;
 	private double averageRating;
 
-	// Standard getters and setters
-
-	// Constructor
 	public Book() {
-		// Default constructor required by MongoDB
 		this.status = "AVAILABLE";
 	}
 
