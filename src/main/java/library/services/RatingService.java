@@ -68,12 +68,27 @@ public class RatingService {
 		return ratingRepository.findByUserId(userId);
 	}
 
-	// Update a rating
 	@Transactional
-	public Rating updateRating(Rating rating) {
-		Rating savedRating = ratingRepository.save(rating);
-		updateBookAverageRating(rating.getBookId());
-		return savedRating;
+	public Rating updateRating(String ratingId, int newRatingValue, String newComment) {
+		// Fetch the existing rating
+		Optional<Rating> existingRatingOpt = ratingRepository.findById(ratingId);
+		if (existingRatingOpt.isEmpty()) {
+			throw new IllegalArgumentException("Rating with ID " + ratingId + " not found.");
+		}
+
+		Rating existingRating = existingRatingOpt.get();
+
+		// Update only the rating value and comment
+		existingRating.setRating(newRatingValue);
+		existingRating.setComment(newComment);
+
+		// Save the updated rating
+		Rating updatedRating = ratingRepository.save(existingRating);
+
+		// Update the book's average rating
+		updateBookAverageRating(existingRating.getBookId());
+
+		return updatedRating;
 	}
 
 	// Delete a rating

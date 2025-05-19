@@ -69,7 +69,7 @@ public class RatingController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Rating> updateRating(@PathVariable String id, @RequestBody Rating rating) {
 		rating.setId(id);
-		Rating updatedRating = ratingService.updateRating(rating);
+		Rating updatedRating = ratingService.updateRating(rating.getId(), rating.getRating(), rating.getComment());
 		return new ResponseEntity<>(updatedRating, HttpStatus.OK);
 	}
 
