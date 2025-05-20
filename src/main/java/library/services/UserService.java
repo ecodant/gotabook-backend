@@ -1,5 +1,6 @@
 package library.services;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,8 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 
-	// Create a new user
 	public User createUser(User user) {
+		user.setFriends(new HashSet<>());
 		return userRepository.save(user);
 	}
 
@@ -28,38 +29,56 @@ public class UserService {
 		return userRepository.findByEmailAndPassword(email, password);
 	}
 
-	// Get all users
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
 
-	// Get user by ID
 	public Optional<User> getUserById(String id) {
 		return userRepository.findById(id);
 	}
 
-	// Get user by username
 	public Optional<User> getUserByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
 
-	// Get user by email
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
 
-	// Update a user
-	public User updateUser(User user) {
+	public User updateUser(User newUser) {
+		// Fetch the original user data
+		Optional<User> originalUserOpt = userRepository.findById(newUser.getId());
+		if (originalUserOpt.isEmpty()) {
+			throw new IllegalArgumentException("User with ID " + newUser.getId() + " not found.");
+		}
 
-		return userRepository.save(user);
+		User originalUser = originalUserOpt.get();
+
+		// Validate some fields for avoid nulls values
+		if (newUser.getUsername() != null) {
+			originalUser.setUsername(newUser.getUsername());
+		}
+		if (newUser.getEmail() != null) {
+			originalUser.setEmail(newUser.getEmail());
+		}
+		if (newUser.getPassword() != null) {
+			originalUser.setPassword(newUser.getPassword());
+		}
+		if (newUser.getRole() != null) {
+			originalUser.setRole(newUser.getRole());
+		}
+		if (newUser.getFriends() != null) {
+			originalUser.setFriends(newUser.getFriends());
+		}
+
+		// Save the updated user
+		return userRepository.save(originalUser);
 	}
 
-	// Delete a user
 	public void deleteUser(String id) {
 		userRepository.deleteById(id);
 	}
 
-	// Get users by role
 	public List<User> getUsersByRole(User.UserRole role) {
 		return userRepository.findByRole(role);
 	}

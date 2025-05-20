@@ -1,6 +1,8 @@
 package library.models;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,6 +16,7 @@ public class User {
 	private String password;
 	private UserRole role;
 	private Date registrationDate;
+	private Set<String> friends;
 
 	public enum UserRole {
 		READER, ADMIN
@@ -32,6 +35,15 @@ public class User {
 		this.password = password;
 		this.role = UserRole.READER;
 		this.registrationDate = new Date();
+		this.friends = new HashSet<>();
+	}
+
+	public Set<String> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(Set<String> friends) {
+		this.friends = friends;
 	}
 
 	public String getId() {
