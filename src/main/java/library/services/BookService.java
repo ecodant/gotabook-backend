@@ -1,7 +1,5 @@
 package library.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -10,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import datastructures.BookBST;
+import datastructures.ArraycitaList;
+import datastructures.LinkedListSimple;
 import jakarta.annotation.PostConstruct;
 import library.exceptions.ResourceNotFoundException;
 import library.models.Book;
@@ -31,14 +31,14 @@ public class BookService {
 	@PostConstruct
 	private void initializeBSTFromDatabase() {
 		logger.info("Loading books from database into BST...");
-		List<Book> allBooks = bookRepository.findAll();
+		java.util.List<Book> allBooks = bookRepository.findAll();
 		for (Book book : allBooks) {
 			bookBST.insert(book);
 		}
 		logger.info("Loaded {} books into BST", allBooks.size());
 	}
 
-	// Add a new book
+
 	public Book addBook(Book book) {
 		// First save to MongoDB
 		Book savedBook = bookRepository.save(book);
@@ -52,10 +52,9 @@ public class BookService {
 		return bookBST.search(title);
 	}
 
-	// Search by title prefix (e.g., books starting with "The")
-	public List<Book> findByTitlePrefix(String prefix) {
-		List<Book> result = new ArrayList<>();
-		List<Book> allBooks = bookBST.getAllBooks();
+	public ArraycitaList<Book> findByTitlePrefix(String prefix) {
+		ArraycitaList<Book> result = new ArraycitaList<>();
+		java.util.List<Book> allBooks = bookBST.getAllBooks();
 
 		for (Book book : allBooks) {
 			if (book.getTitle().toLowerCase().startsWith(prefix.toLowerCase())) {
@@ -66,12 +65,19 @@ public class BookService {
 		return result;
 	}
 
-	// Get all books in alphabetical order
-	public List<Book> getAllBooksSorted() {
-		return bookRepository.findAll();
+	
+	public LinkedListSimple<Book> getAllBooksSorted() {
+		java.util.List<Book> books = bookRepository.findAll();
+		LinkedListSimple<Book> linkedBooks = new LinkedListSimple<>();
+		
+		for (Book book : books) {
+			linkedBooks.add(book);
+		}
+		
+		return linkedBooks;
 	}
 
-	// Update a book
+
 	public Book updateBook(String id, Book updatedBook) {
 		// First find the book in MongoDB
 		Book existingBook = bookRepository.findById(id)
@@ -90,14 +96,14 @@ public class BookService {
 		if (updatedBook.getCategory() != null) {
 			existingBook.setCategory(updatedBook.getCategory());
 		}
-		if (updatedBook.getStatus() != null) { // Assuming 'status' is a field in the Book class
+		if (updatedBook.getStatus() != null) {
 			existingBook.setStatus(updatedBook.getStatus());
 		}
 
 		// Save to MongoDB
 		Book savedBook = bookRepository.save(existingBook);
 
-		// Update BST (delete and re-insert)
+		// Update BST 
 		bookBST.delete(existingBook.getTitle());
 		bookBST.insert(savedBook);
 
@@ -116,19 +122,30 @@ public class BookService {
 		bookBST.delete(book.getTitle());
 	}
 
-	// Additional methods for other search criteria
-	public List<Book> findByAuthor(String author) {
+
+	public ArraycitaList<Book> findByAuthor(String author) {
 		// Since we're searching by author (not optimized in BST),
-		// we'll use MongoDB directly
-		return bookRepository.findByAuthorContainingIgnoreCase(author);
+		// we'll use MongoDB directly and convert to our custom data structure
+		java.util.List<Book> books = bookRepository.findByAuthorContainingIgnoreCase(author);
+		return convertToCustomArrayList(books);
 	}
 
-	public List<Book> findByCategory(String category) {
-		// Use MongoDB for category search
-		return bookRepository.findByCategory(category);
+	public ArraycitaList<Book> findByCategory(String category) {
+		// For the bear requirement of use a custom Data Structure
+		java.util.List<Book> books = bookRepository.findByCategory(category);
+		return convertToCustomArrayList(books);
 	}
 
 	public Optional<Book> findById(String id) {
 		return bookRepository.findById(id);
+	}
+	
+	// Helper method to convert standard Java List to our ArraycitaList
+	private ArraycitaList<Book> convertToCustomArrayList(java.util.List<Book> books) {
+		ArraycitaList<Book> customList = new ArraycitaList<>(books.size());
+		for (Book book : books) {
+			customList.add(book);
+		}
+		return customList;
 	}
 }

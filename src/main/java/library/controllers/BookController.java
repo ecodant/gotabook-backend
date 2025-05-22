@@ -1,5 +1,6 @@
 package library.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import datastructures.ArraycitaList;
+import datastructures.LinkedListSimple;
 import library.models.Book;
 import library.services.BookService;
 
@@ -31,15 +34,8 @@ public class BookController {
 
 	@GetMapping("/")
 	public ResponseEntity<List<Book>> getAllBooks(@RequestParam(required = false) String sortBy) {
-		List<Book> books;
-		if ("title".equals(sortBy)) {
-			// Use BST for title-sorted results
-			books = bookCatalogService.getAllBooksSorted();
-		} else {
-			// For other sorts, you might need repository methods
-			books = bookCatalogService.getAllBooksSorted();
-		}
-		return ResponseEntity.ok(books);
+		LinkedListSimple<Book> books = bookCatalogService.getAllBooksSorted();
+		return ResponseEntity.ok(books.toList());
 	}
 
 	@GetMapping("/{id}")
@@ -65,20 +61,30 @@ public class BookController {
 	public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String title,
 			@RequestParam(required = false) String author, @RequestParam(required = false) String category) {
 
-		List<Book> results;
+		List<Book> results = new ArrayList<>();
 
 		if (title != null) {
 			// Use BST for efficient title search
-			results = bookCatalogService.findByTitlePrefix(title);
+			ArraycitaList<Book> booksFound = bookCatalogService.findByTitlePrefix(title);
+			for (Book book : booksFound) {
+				results.add(book);
+			}
 		} else if (author != null) {
-			// Use MongoDB for author search
-			results = bookCatalogService.findByAuthor(author);
+			// Use custom data structure for author search
+			ArraycitaList<Book> booksFound = bookCatalogService.findByAuthor(author);
+			for (Book book : booksFound) {
+				results.add(book);
+			}
 		} else if (category != null) {
-			// Use MongoDB for category search
-			results = bookCatalogService.findByCategory(category);
+			// Use custom data structure for category search
+			ArraycitaList<Book> booksFound = bookCatalogService.findByCategory(category);
+			for (Book book : booksFound) {
+				results.add(book);
+			}
 		} else {
 			// Return all books if no parameters
-			results = bookCatalogService.getAllBooksSorted();
+			LinkedListSimple<Book> books = bookCatalogService.getAllBooksSorted();
+			results = books.toList();
 		}
 
 		return ResponseEntity.ok(results);
@@ -86,7 +92,6 @@ public class BookController {
 
 	@PostMapping("/")
 	public ResponseEntity<Book> createBook(@RequestBody Book book) {
-
 		Book newBook = bookCatalogService.addBook(book);
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBook);
 	}

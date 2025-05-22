@@ -29,21 +29,20 @@ public class RatingController {
 		this.ratingService = ratingService;
 	}
 
-	// Create a new rating
 	@PostMapping
 	public ResponseEntity<Rating> createRating(@RequestBody Rating rating) {
 		Rating createdRating = ratingService.createRating(rating);
 		return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
 	}
 
-	// Get all ratings
+
 	@GetMapping("/")
 	public ResponseEntity<List<Rating>> getAllRatings() {
 		List<Rating> ratings = ratingService.getAllRatings();
 		return new ResponseEntity<>(ratings, HttpStatus.OK);
 	}
 
-	// Get rating by ID
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Rating> getRatingById(@PathVariable String id) {
 		Optional<Rating> rating = ratingService.getRatingById(id);
@@ -51,21 +50,21 @@ public class RatingController {
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	// Get ratings by book ID
+
 	@GetMapping("/book/{bookId}")
 	public ResponseEntity<List<Rating>> getRatingsByBookId(@PathVariable String bookId) {
 		List<Rating> ratings = ratingService.getRatingsByBookId(bookId);
 		return new ResponseEntity<>(ratings, HttpStatus.OK);
 	}
 
-	// Get ratings by user ID
+
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<Rating>> getRatingsByUserId(@PathVariable String userId) {
 		List<Rating> ratings = ratingService.getRatingsByUserId(userId);
 		return new ResponseEntity<>(ratings, HttpStatus.OK);
 	}
 
-	// Update a rating
+
 	@PutMapping("/{id}")
 	public ResponseEntity<Rating> updateRating(@PathVariable String id, @RequestBody Rating rating) {
 		rating.setId(id);
@@ -73,7 +72,6 @@ public class RatingController {
 		return new ResponseEntity<>(updatedRating, HttpStatus.OK);
 	}
 
-	// Delete a rating
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteRating(@PathVariable String id) {
 		ratingService.deleteRating(id);

@@ -7,22 +7,20 @@ This API is designed to manage a digital library, allowing users to borrow books
 ### User Management
 
 - User registration and authentication with role-based access (Reader/Administrator)
-- User profile management
 - Network of reader affinities based on similar book ratings
 - Friend recommendations based on shared interests
 
 ### Book Management
 
-- Complete book catalog with search functionality (by title, author, category)
-- Book metadata including title, author, year, category, and availability status
-- Average book ratings and reviews
+- Complete book catalog
+- Average book ratings
 - Admin tools for adding, updating, and removing books
 
 ### Loan System
 
 - Book borrowing and return processes
-- Waitlist management for popular books using priority queues
-- Loan history tracking
+- Waitlist management using queues
+- Loan history
 - Book availability status updates
 
 ### Rating System
@@ -31,18 +29,6 @@ This API is designed to manage a digital library, allowing users to borrow books
 - Calculation of average book ratings
 - Analytics for most rated and highest-rated books
 - Reader connectivity based on similar ratings
-
-### Reader Connectivity
-
-- Graph-based network of readers with similar interests
-- "Friends of friends" suggestions
-- Shortest path algorithms to discover reader connections
-- Identification of reader affinity clusters
-
-### Messaging System
-
-- Direct messaging between connected readers
-- Message history and conversation tracking
 
 ## Technologies Used
 
@@ -57,63 +43,56 @@ This API is designed to manage a digital library, allowing users to borrow books
 
 - **Binary Search Tree (BST):** For efficient book catalog management
 - **Graph:** For representing reader affinity networks
-- **Priority Queue:** For managing book waitlists
+- **Queue:** For managing book waitlists
 - **Linked Lists:** For tracking loan history and ratings
+- **Custom Array:** For store some data returned from the DataBase
 
 ## Endpoints
 
-### Authentication
+### User
 
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Authenticate user and receive token
+- `POST /api/users/register` - Register a new user
+- `POST /api/users/login` - Authenticate user and receive token
+- `GET /api/users/{id}` - Get Data from a particular User
 
-### User Management
+### Book
 
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update user profile
-- `GET /api/users/recommendations` - Get reader recommendations
-
-### Book Management
-
-- `GET /api/books` - Get all books
+- `GET /api/books/` - Get all books
 - `GET /api/books/{id}` - Get book by ID
+- `GET /api/books/title/{title}` - Get book by Title
 - `GET /api/books/search` - Search books by criteria
-- `POST /api/books` - Add new book (admin)
+- `POST /api/books/` - Add new book (admin)
 - `PUT /api/books/{id}` - Update book information (admin)
 - `DELETE /api/books/{id}` - Remove book from catalog (admin)
 
-### Loan Management
+### Loan
 
-- `POST /api/loans` - Borrow a book
+- `POST /api/loans/` - Borrow a book (Create a Loan)
 - `PUT /api/loans/{id}/return` - Return a book
-- `GET /api/loans/user` - Get user's active loans
-- `GET /api/loans/history` - Get user's loan history
-- `GET /api/loans/waitlist` - Check waitlist status
+- `GET /api/loans/{id}` - Get loand by ID
+- `GET /api/loans/user/{userId}` - Get user's loans
+- `GET /api/loans/user/{userId}/active` - Get user's active loans
+- `GET /api/loans/queue/{bookId}` - Get the waiting queue for a particular book
 
 ### Rating System
 
-- `POST /api/ratings` - Rate a book
+- `POST /api/ratings/` - Rate a book (Create a Rating)
+- `GET /api/ratings/` - Get all ratings
 - `PUT /api/ratings/{id}` - Update a rating
+- `GET /api/ratings/{id}` - Get rating by id
 - `GET /api/ratings/book/{id}` - Get book ratings
-- `GET /api/books/top-rated` - Get top-rated books
-
-### Reader Affinity Graph
-
-- `GET /api/graph/connections` - Get reader connections
-- `GET /api/graph/path/{userId}` - Find path to another reader
-- `GET /api/graph/suggestions` - Get reader suggestions
+- `GET /api/ratings/user/{id}` - Get user ratings
 
 ### Messaging
 
-- `POST /api/messages` - Send a message
-- `GET /api/messages/inbox` - Get received messages
-- `GET /api/messages/conversation/{userId}` - Get conversation history
+- `POST /api/messages/` - Send a message
+- `GET /api/messages/{id}` - Get message by id
+- `GET /api/messages/sender/{senderId}` - Get message by Sender
+- `GET /api/messages/receiver/{receiverId}` - Get message by Receiver
 
-### Admin Functions
+### Admin
 
-- `GET /api/admin/stats` - Get system statistics
-- `GET /api/admin/users` - Manage users (admin)
-- `GET /api/admin/graph` - View complete affinity graph (admin)
+- `GET /api/admin/stats` - Get system reports
 
 ## Getting Started
 

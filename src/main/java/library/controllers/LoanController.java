@@ -29,7 +29,6 @@ public class LoanController {
 		this.loanService = loanService;
 	}
 
-	// Create a new loan
 	@PostMapping("/")
 	public ResponseEntity<Loan> createLoan(@RequestBody Loan loan) {
 		Loan createdLoan = loanService.createLoan(loan);
@@ -40,14 +39,12 @@ public class LoanController {
 		}
 	}
 
-	// Get all loans
 	@GetMapping("/")
 	public ResponseEntity<List<Loan>> getAllLoans() {
 		List<Loan> loans = loanService.getAllLoans();
 		return new ResponseEntity<>(loans, HttpStatus.OK);
 	}
 
-	// Get loan by ID
 	@GetMapping("/{id}")
 	public ResponseEntity<Loan> getLoanById(@PathVariable String id) {
 		Optional<Loan> loan = loanService.getLoanById(id);
@@ -55,7 +52,7 @@ public class LoanController {
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	// Get loans by user ID
+
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<Loan>> getLoansByUserId(@PathVariable String userId) {
 		List<Loan> loans = loanService.getLoansByUserId(userId);
@@ -69,7 +66,7 @@ public class LoanController {
 		return new ResponseEntity<>(loans, HttpStatus.OK);
 	}
 
-	// Get loans by book ID
+
 	@GetMapping("/book/{bookId}")
 	public ResponseEntity<List<Loan>> getLoansByBookId(@PathVariable String bookId) {
 		List<Loan> loans = loanService.getLoansByBookId(bookId);
@@ -87,7 +84,6 @@ public class LoanController {
 		}
 	}
 
-	// Return a book
 	@PutMapping("/{id}/return")
 	public ResponseEntity<Loan> returnBook(@PathVariable String id) {
 		Loan returnedLoan = loanService.returnBook(id);
@@ -98,7 +94,6 @@ public class LoanController {
 		}
 	}
 
-	// Delete a loan
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteLoan(@PathVariable String id) {
 		loanService.deleteLoan(id);

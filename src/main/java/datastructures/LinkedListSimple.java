@@ -23,7 +23,7 @@ public class LinkedListSimple<T> {
 		}
 	}
 
-	// Constructor
+
 	public LinkedListSimple() {
 		this.head = null;
 		this.size = 0;
@@ -53,7 +53,7 @@ public class LinkedListSimple<T> {
 		size++;
 	}
 
-	// Remove element
+
 	public boolean remove(T data) {
 		if (head == null) {
 			return false;
@@ -93,12 +93,12 @@ public class LinkedListSimple<T> {
 		return current.data;
 	}
 
-	// Get size
+
 	public int size() {
 		return size;
 	}
 
-	// Check if empty
+
 	public boolean isEmpty() {
 		return size == 0;
 	}
@@ -116,7 +116,6 @@ public class LinkedListSimple<T> {
 		return list;
 	}
 
-	// Get head node
 	public Node<T> getHead() {
 		return head;
 	}
