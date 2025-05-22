@@ -3,7 +3,6 @@ package library.services;
 import java.util.Date;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,24 +25,24 @@ public class MessageService {
 		return messageRepository.save(message);
 	}
 
-	public Message getMessageById(ObjectId id) {
+	public Message getMessageById(String id) {
 		return messageRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Message not found with id: " + id));
 	}
 
-	public List<Message> getMessagesBySender(ObjectId senderId) {
+	public List<Message> getMessagesBySender(String senderId) {
 		return messageRepository.findBySenderId(senderId);
 	}
 
-	public List<Message> getMessagesByReceiver(ObjectId receiverId) {
+	public List<Message> getMessagesByReceiver(String receiverId) {
 		return messageRepository.findByReceiverId(receiverId);
 	}
 
-	public List<Message> getConversation(ObjectId senderId, ObjectId receiverId) {
+	public List<Message> getConversation(String senderId, String receiverId) {
 		return messageRepository.findBySenderIdAndReceiverId(senderId, receiverId);
 	}
 
-	public List<Message> getUnreadMessages(ObjectId receiverId) {
+	public List<Message> getUnreadMessages(String receiverId) {
 		return messageRepository.findByReceiverIdAndReadFalse(receiverId);
 	}
 
@@ -51,17 +50,17 @@ public class MessageService {
 		return messageRepository.findAllByOrderByDateDesc();
 	}
 
-	public long countUnreadMessages(ObjectId receiverId) {
+	public long countUnreadMessages(String receiverId) {
 		return messageRepository.countByReceiverIdAndReadFalse(receiverId);
 	}
 
-	public Message markAsRead(ObjectId messageId) {
+	public Message markAsRead(String messageId) {
 		Message message = getMessageById(messageId);
 		message.setRead(true);
 		return messageRepository.save(message);
 	}
 
-	public void deleteMessage(ObjectId messageId) {
+	public void deleteMessage(String messageId) {
 		messageRepository.deleteById(messageId);
 	}
 }

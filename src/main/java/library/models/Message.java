@@ -2,7 +2,6 @@ package library.models;
 
 import java.util.Date;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,34 +13,34 @@ import lombok.NoArgsConstructor;
 @Document(collection = "messages")
 public class Message {
 	@Id
-	private ObjectId id;
-	private ObjectId senderId;
-	private ObjectId receiverId;
+	private String id;
+	private String senderId;
+	private String receiverId;
 	private String content;
 	private Date date;
 	private boolean read;
 
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public ObjectId getSenderId() {
+	public String getSenderId() {
 		return senderId;
 	}
 
-	public void setSenderId(ObjectId senderId) {
+	public void setSenderId(String senderId) {
 		this.senderId = senderId;
 	}
 
-	public ObjectId getReceiverId() {
+	public String getReceiverId() {
 		return receiverId;
 	}
 
-	public void setReceiverId(ObjectId receiverId) {
+	public void setReceiverId(String receiverId) {
 		this.receiverId = receiverId;
 	}
 

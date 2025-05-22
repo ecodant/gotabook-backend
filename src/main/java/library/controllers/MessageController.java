@@ -2,7 +2,6 @@ package library.controllers;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import library.models.Message;
@@ -40,43 +38,37 @@ public class MessageController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Message> getMessage(@PathVariable ObjectId id) {
+	public ResponseEntity<Message> getMessage(@PathVariable String id) {
 		return ResponseEntity.ok(messageService.getMessageById(id));
 	}
 
 	@GetMapping("/sender/{senderId}")
-	public ResponseEntity<List<Message>> getMessagesBySender(@PathVariable ObjectId senderId) {
+	public ResponseEntity<List<Message>> getMessagesBySender(@PathVariable String senderId) {
 		return ResponseEntity.ok(messageService.getMessagesBySender(senderId));
 	}
 
 	@GetMapping("/receiver/{receiverId}")
-	public ResponseEntity<List<Message>> getMessagesByReceiver(@PathVariable ObjectId receiverId) {
+	public ResponseEntity<List<Message>> getMessagesByReceiver(@PathVariable String receiverId) {
 		return ResponseEntity.ok(messageService.getMessagesByReceiver(receiverId));
 	}
 
-	@GetMapping("/conversation")
-	public ResponseEntity<List<Message>> getConversation(@RequestParam ObjectId senderId,
-			@RequestParam ObjectId receiverId) {
-		return ResponseEntity.ok(messageService.getConversation(senderId, receiverId));
-	}
-
 	@GetMapping("/unread/{receiverId}")
-	public ResponseEntity<List<Message>> getUnreadMessages(@PathVariable ObjectId receiverId) {
+	public ResponseEntity<List<Message>> getUnreadMessages(@PathVariable String receiverId) {
 		return ResponseEntity.ok(messageService.getUnreadMessages(receiverId));
 	}
 
 	@GetMapping("/unread/count/{receiverId}")
-	public ResponseEntity<Long> countUnreadMessages(@PathVariable ObjectId receiverId) {
+	public ResponseEntity<Long> countUnreadMessages(@PathVariable String receiverId) {
 		return ResponseEntity.ok(messageService.countUnreadMessages(receiverId));
 	}
 
 	@PutMapping("/read/{messageId}")
-	public ResponseEntity<Message> markAsRead(@PathVariable ObjectId messageId) {
+	public ResponseEntity<Message> markAsRead(@PathVariable String messageId) {
 		return ResponseEntity.ok(messageService.markAsRead(messageId));
 	}
 
 	@DeleteMapping("/{messageId}")
-	public ResponseEntity<Void> deleteMessage(@PathVariable ObjectId messageId) {
+	public ResponseEntity<Void> deleteMessage(@PathVariable String messageId) {
 		messageService.deleteMessage(messageId);
 		return ResponseEntity.noContent().build();
 	}
