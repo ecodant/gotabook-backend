@@ -54,17 +54,19 @@ public class LoanService {
 			return loanRepository.save(newLoan);
 		}
 
-		// 3. If book is already borrowed → Queue the loan
+		// 3. If book is already borrowed will queue the loan
 		newLoan.setStatus(LoanStatus.WAITING);
 		newLoan.setBookTitle(book.getTitle());
-		newLoan.setReturnDate(null); // Waiting loans have no return date yet
+		// Waiting loans have no return date yet
+		newLoan.setReturnDate(null); 
 
 		LoanQueue loanQueue = loanQueueRepository.findById(newLoan.getBookId())
 				.orElse(new LoanQueue(newLoan.getBookId()));
 
 		List<Loan> waitingList = loanQueue.getQueue();
 		waitingList.add(newLoan);
-		waitingList.sort(Comparator.comparing(Loan::getLoanDate)); // Keep FIFO order
+		// FIFO 
+		waitingList.sort(Comparator.comparing(Loan::getLoanDate)); 
 
 		loanQueue.setQueue(waitingList);
 		loanQueueRepository.save(loanQueue);
@@ -165,7 +167,7 @@ public class LoanService {
 		return returnedLoan;
 	}
 
-	// Delete a loan
+
 	public void deleteLoan(String id) {
 		loanRepository.deleteById(id);
 	}

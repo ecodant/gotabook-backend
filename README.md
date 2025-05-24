@@ -92,7 +92,10 @@ This API is designed to manage a digital library, allowing users to borrow books
 
 ### Admin
 
-- `GET /api/admin/stats` - Get system reports
+- `GET /api/stats/user-loans/{userId}` - Get User loan statistics
+- `GET /api/stats/path/{userId1}/{userId2}` - Get the shortest path between users
+- `GET /api/stats/most-rated-books` - Get most rated books
+- `GET /api/stats/readers-with-most-friends` - Get users with more connections
 
 ## Getting Started
 

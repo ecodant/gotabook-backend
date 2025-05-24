@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "loan_queues")
 public class LoanQueue {
 	@Id
-	private String bookId; // Primary key
+	private String bookId; 
 	private List<Loan> queue = new ArrayList<>();
 
 	public LoanQueue(String bookId) {
@@ -31,6 +31,12 @@ public class LoanQueue {
 	public void setQueue(List<Loan> queue) {
 		this.queue = queue;
 	}
-
-	// Add/Remove from queue logic
+	public List<Loan> pop() {
+		if (queue.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<Loan> loansToReturn = new ArrayList<>(queue);
+		queue.clear();
+		return loansToReturn;
+	}
 }
