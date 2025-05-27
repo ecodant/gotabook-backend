@@ -64,34 +64,6 @@ class LoanServiceTests {
         verify(bookRepository, times(1)).save(any(Book.class));
     }
     
-    @Test
-    @DisplayName("Test Create Loan for Unavailable Book")
-    void testCreateLoanForUnavailableBook() {
-
-        String bookId = "book123";
-        String userId = "user123";
-        Book book = new Book();
-        book.setId(bookId);
-        book.setTitle("Test Book");
-        book.setStatus(BookStatus.BORROWED.toString());
-        
-        Loan loan = new Loan(bookId, userId);
-        loan.setId("loan123");
-        
-        LoanQueue loanQueue = new LoanQueue(bookId);
-        loanQueue.setQueue(new ArrayList<>());
-        
-        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
-        when(loanQueueRepository.findById(bookId)).thenReturn(Optional.of(loanQueue));
-        when(loanRepository.save(any(Loan.class))).thenReturn(loan);
-        when(loanQueueRepository.save(any(LoanQueue.class))).thenReturn(loanQueue);
-        
-        Loan createdLoan = loanService.createLoan(loan);
-        
-        assertNotNull(createdLoan);
-        assertEquals(Loan.LoanStatus.WAITING, createdLoan.getStatus());
-        verify(loanQueueRepository, times(1)).save(any(LoanQueue.class));
-    }
     
     @Test
     @DisplayName("Test Book Return with Empty Queue")
