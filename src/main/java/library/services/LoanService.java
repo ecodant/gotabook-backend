@@ -63,11 +63,15 @@ public class LoanService {
 		LoanQueue loanQueue = loanQueueRepository.findById(newLoan.getBookId())
 				.orElse(new LoanQueue(newLoan.getBookId()));
 
+		// Add to queue and maintain sorting order
+		loanQueue.addLoan(newLoan);
+		
+		// Get queue as list for sorting
 		List<Loan> waitingList = loanQueue.getQueue();
-		waitingList.add(newLoan);
 		// FIFO 
 		waitingList.sort(Comparator.comparing(Loan::getLoanDate)); 
-
+		
+		// Set the sorted queue back
 		loanQueue.setQueue(waitingList);
 		loanQueueRepository.save(loanQueue);
 
@@ -129,17 +133,12 @@ public class LoanService {
 
 		if (loanQueueOpt.isPresent()) {
 			LoanQueue loanQueue = loanQueueOpt.get();
-			List<Loan> queue = loanQueue.getQueue();
-
-			if (!queue.isEmpty()) {
+			
+			if (!loanQueue.isEmpty()) {
 				// 3. Promote next loan in line
-//				Calendar calendar = Calendar.getInstance();
-//				calendar.add(Calendar.DAY_OF_YEAR, 14);
-
-				Loan nextLoan = queue.remove(0);
+				Loan nextLoan = loanQueue.pollFirst();
 				nextLoan.setStatus(LoanStatus.ACTIVE);
 				nextLoan.setLoanDate(new Date());
-//				nextLoan.setReturnDate(calendar.getTime());
 				loanRepository.save(nextLoan);
 
 				// 4. Update book status and save
@@ -147,9 +146,7 @@ public class LoanService {
 				bookRepository.save(book);
 
 				// 5. Persist updated queue
-				loanQueue.setQueue(queue);
 				loanQueueRepository.save(loanQueue);
-
 			} else {
 				// No one waiting, mark book as available
 				book.setStatus(BookStatus.AVAILABLE.toString());

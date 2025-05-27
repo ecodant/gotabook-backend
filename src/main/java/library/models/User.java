@@ -14,26 +14,20 @@ public class User {
 	private String username;
 	private String email;
 	private String password;
-	private UserRole role;
+	private Role role;
 	private Date registrationDate;
 	private Set<String> friends;
 
-	public enum UserRole {
-		READER, ADMIN
-	}
-
-	// Default constructor
 	public User() {
-		this.role = UserRole.READER;
+		this.role = Role.READER;
 		this.registrationDate = new Date();
 	}
 
-	// Constructor with fields (no ID)
 	public User(String username, String email, String password) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.role = UserRole.READER;
+		this.role = Role.READER;
 		this.registrationDate = new Date();
 		this.friends = new HashSet<>();
 	}
@@ -78,11 +72,11 @@ public class User {
 		this.password = password;
 	}
 
-	public UserRole getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(UserRole role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

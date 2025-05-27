@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import library.models.Role;
 import library.models.User;
 import library.services.UserService;
 
@@ -29,7 +30,6 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	// User registration
 	@PostMapping("/register")
 	public ResponseEntity<User> register(@RequestBody User user) {
 		Optional<User> existingUser = userService.getUserByUsername(user.getUsername());
@@ -40,7 +40,6 @@ public class UserController {
 		return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
 	}
 
-	// User login
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestBody User loginRequest) {
 		Optional<User> user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
@@ -51,14 +50,12 @@ public class UserController {
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
 	}
 
-	// Get all users
 	@GetMapping("/")
 	public ResponseEntity<List<User>> getAllUsers() {
 		List<User> users = userService.getAllUsers();
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
-	// Get user by ID
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable String id) {
 		Optional<User> user = userService.getUserById(id);
@@ -66,7 +63,6 @@ public class UserController {
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	// Get user by username
 	@GetMapping("/username/{username}")
 	public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
 		Optional<User> user = userService.getUserByUsername(username);
@@ -74,7 +70,6 @@ public class UserController {
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	// Get user by email
 	@GetMapping("/email/{email}")
 	public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
 		Optional<User> user = userService.getUserByEmail(email);
@@ -82,7 +77,6 @@ public class UserController {
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	// Update a user
 	@PutMapping("/{id}")
 	public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
 		user.setId(id);
@@ -90,16 +84,14 @@ public class UserController {
 		return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 	}
 
-	// Delete a user
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	// Get users by role
 	@GetMapping("/role/{role}")
-	public ResponseEntity<List<User>> getUsersByRole(@PathVariable User.UserRole role) {
+	public ResponseEntity<List<User>> getUsersByRole(@PathVariable Role role) {
 		List<User> users = userService.getUsersByRole(role);
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import library.models.Role;
 import library.models.User;
 import library.repositories.UserRepository;
 
@@ -54,7 +55,6 @@ public class UserService {
 
 		User originalUser = originalUserOpt.get();
 
-		// Validate some fields for avoid nulls values
 		if (newUser.getUsername() != null) {
 			originalUser.setUsername(newUser.getUsername());
 		}
@@ -71,7 +71,6 @@ public class UserService {
 			originalUser.setFriends(newUser.getFriends());
 		}
 
-		// Save the updated user
 		return userRepository.save(originalUser);
 	}
 
@@ -79,7 +78,7 @@ public class UserService {
 		userRepository.deleteById(id);
 	}
 
-	public List<User> getUsersByRole(User.UserRole role) {
+	public List<User> getUsersByRole(Role role) {
 		return userRepository.findByRole(role);
 	}
 }

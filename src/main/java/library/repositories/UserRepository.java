@@ -5,11 +5,15 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import library.models.Role;
 import library.models.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
 	Optional<User> findByUsername(String username);
+
 	Optional<User> findByEmail(String email);
+
 	Optional<User> findByEmailAndPassword(String email, String password);
-	List<User> findByRole(User.UserRole role);
+
+	List<User> findByRole(Role role);
 }

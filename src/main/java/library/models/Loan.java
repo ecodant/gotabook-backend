@@ -35,7 +35,7 @@ public class Loan {
 		this.returnDate = calculateDefaultReturnDate();
 	}
 
-	// Helper method to calculate default return date (e.g., 14 days later)
+	// Helper method to calculate default return date
 	private Date calculateDefaultReturnDate() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(this.loanDate);

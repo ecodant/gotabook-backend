@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import datastructures.AffinityGraph;
 import library.models.Book;
 import library.models.Loan;
+import library.models.Role;
 import library.models.User;
 import library.repositories.BookRepository;
 import library.repositories.LoanRepository;
@@ -127,7 +128,7 @@ public class StatsService {
     // 3. Get readers with most friends
     public List<Map<String, Object>> getReadersWithMostFriends(int limit) {
         // Get all users with READER role
-        List<User> readers = userRepository.findByRole(User.UserRole.READER);
+        List<User> readers = userRepository.findByRole(Role.READER);
         
         // Calculate friend count for each reader
         List<Map<String, Object>> readerStats = new ArrayList<>();

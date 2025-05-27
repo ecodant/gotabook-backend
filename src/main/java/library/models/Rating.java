@@ -15,12 +15,10 @@ public class Rating {
 	private String comment;
 	private Date date;
 
-	// Default constructor
 	public Rating() {
 		this.date = new Date();
 	}
 
-	// Constructor with fields
 	public Rating(String bookId, String userId, int rating, String comment) {
 		this.bookId = bookId;
 		this.userId = userId;
@@ -29,7 +27,6 @@ public class Rating {
 		this.date = new Date();
 	}
 
-	// Getters and Setters
 	public String getId() {
 		return id;
 	}
